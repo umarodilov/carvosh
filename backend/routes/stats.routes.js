@@ -3,27 +3,28 @@ import Order from "../models/Order.js";
 
 const router = express.Router();
 
-function startOfTodayLocal() {
-    const d = new Date();
-    d.setHours(0, 0, 0, 0);
-    return d;
+function startOfDayLocal(d = new Date()) {
+    const x = new Date(d);
+    x.setHours(0, 0, 0, 0);
+    return x;
 }
-function startOfNDaysAgoLocal(n) {
-    const d = startOfTodayLocal();
+
+function daysAgo(n) {
+    const d = new Date();
     d.setDate(d.getDate() - n);
-    return d;
-}
-function startOfMonthLocal() {
-    const d = new Date();
-    d.setDate(1);
-    d.setHours(0, 0, 0, 0);
     return d;
 }
 
 async function sumFrom(dateFrom) {
     const agg = await Order.aggregate([
         { $match: { createdAt: { $gte: dateFrom } } },
-        { $group: { _id: null, count: { $sum: 1 }, revenue: { $sum: "$total" } } },
+        {
+            $group: {
+                _id: null,
+                count: { $sum: 1 },
+                revenue: { $sum: { $ifNull: ["$total", 0] } },
+            },
+        },
     ]);
 
     const row = agg[0] || { count: 0, revenue: 0 };
@@ -32,11 +33,15 @@ async function sumFrom(dateFrom) {
 
 router.get("/", async (req, res) => {
     try {
-        const day = await sumFrom(startOfTodayLocal());
-        const week = await sumFrom(startOfNDaysAgoLocal(6));
-        const month = await sumFrom(startOfMonthLocal());
+        const day = await sumFrom(startOfDayLocal()); // имрӯз
+        const week = await sumFrom(daysAgo(7));       // 7 рӯзи охир
+        const month = await sumFrom(daysAgo(30));     // 30 рӯзи охир
 
-        res.json({ day, week, month });
+        res.json({
+            day: { ...day, label: "Имрӯз" },
+            week: { ...week, label: "7 рӯзи охир" },
+            month: { ...month, label: "30 рӯзи охир" },
+        });
     } catch (e) {
         console.error("STATS_ERROR:", e);
         res.status(500).json({ message: "Stats error", error: e?.message });
@@ -44,3 +49,4 @@ router.get("/", async (req, res) => {
 });
 
 export default router;
+

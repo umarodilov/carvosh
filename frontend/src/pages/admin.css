@@ -239,3 +239,54 @@ var(--bg); color: var(--text); font-family: system-ui, -apple-system, Segoe UI, 
     position: relative;
     z-index: 40;
 }
+
+/* ===== Section head: title + right controls ===== */
+.adm-sectionHead{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+}
+
+.adm-sectionRight{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+/* ===== Orders range buttons ===== */
+.adm-range{
+    display:flex;
+    gap:6px;
+    padding:6px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.12);
+    background: rgba(7,11,22,.35);
+}
+
+.adm-rangeBtn{
+    border:1px solid transparent;
+    background: transparent;
+    color: rgba(169,178,212,.95);
+    padding: 8px 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 850;
+    font-size: 12px;
+    transition: background .15s ease, border-color .15s ease, transform .08s ease;
+    white-space: nowrap;
+}
+
+.adm-rangeBtn:hover{ transform: translateY(-1px); }
+
+.adm-rangeBtn.on{
+    background: rgba(96,165,250,.14);
+    border-color: rgba(96,165,250,.35);
+    color: #fff;
+}
+
+@media (max-width: 520px){
+    .adm-range{ width: 100%; }
+    .adm-rangeBtn{ flex: 1; }
+}

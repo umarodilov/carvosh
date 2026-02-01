@@ -32,12 +32,23 @@ function UserMenu({ user, setUser }) {
     };
 
     return (
-        <div style={{ position: "relative" }}>
+        <div style={{ position: "relative", display: "inline-block" }}>
             <button
                 type="button"
-                onClick={() => setOpen((v) => !v)}
-                style={{ background: "transparent", border: "none", cursor: "pointer", padding: 0 }}
-                aria-label="user menu"
+                onClick={() => setOpen(v => !v)}
+                aria-label="менюи корбар"
+                style={{
+                    background: "transparent",
+                    border: "none",
+                    cursor: "pointer",
+                    padding: 0,
+                    width: 38,
+                    height: 38,
+                    borderRadius: 12,
+                    display: "grid",
+                    placeItems: "center",
+                    color: "white",
+                }}
             >
                 <FaUserCircle size={28} />
             </button>
@@ -46,40 +57,132 @@ function UserMenu({ user, setUser }) {
                 <div
                     style={{
                         position: "absolute",
-                        right: 0,
-                        top: "120%",
-                        background: "#fff",
-                        border: "1px solid rgba(0,0,0,.12)",
-                        borderRadius: 12,
-                        padding: 10,
-                        minWidth: 160,
-                        boxShadow: "0 10px 30px rgba(0,0,0,.10)",
-                        zIndex: 999,
+
+                        /* 👉 аз бараш, аз ТАРАФИ РОСТ */
+                        left: "100%",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        marginLeft: 10,
+
+                        width: 220,
+                        maxWidth: "90vw",
+
+                        background: "rgba(7,11,22,.9)",
+                        border: "1px solid rgba(255,255,255,.14)",
+                        borderRadius: 14,
+                        padding: 12,
+                        boxShadow: "0 18px 60px rgba(0,0,0,.45)",
+                        backdropFilter: "blur(12px)",
+                        zIndex: 9999,
                     }}
                 >
                     {user ? (
                         <>
-                            <div style={{ fontSize: 12, opacity: 0.7, marginBottom: 8 }}>
-                                Role: <b>{user.role}</b>
+                            {/* INFO */}
+                            <div
+                                style={{
+                                    fontSize: 12,
+                                    color: "rgba(169,178,212,.85)",
+                                    marginBottom: 10,
+                                }}
+                            >
+                                Ворид шудӣ ҳамчун:
+                                <br />
+                                <b style={{ color: "white" }}>{user.email}</b>
+                                <br />
+                                Нақш: <b>{user.role}</b>
                             </div>
+
+                            {/* ADMIN */}
                             {user.role === "admin" && (
-                                <button className="btn btnPri" style={{ width: "100%", marginBottom: 8 }} onClick={() => nav("/admin")}>
-                                    Admin
+                                <button
+                                    className="btn btnPri"
+                                    style={{ width: "100%", marginBottom: 8 }}
+                                    onClick={() => {
+                                        setOpen(false);
+                                        nav("/admin");
+                                    }}
+                                >
+                                    ⚙️ Admin panel
                                 </button>
                             )}
-                            <button className="btn" style={{ width: "100%" }} onClick={doLogout}>
-                                Logout
+
+                            {/* LOGOUT */}
+                            <button
+                                className="btn"
+                                style={{ width: "100%" }}
+                                onClick={doLogout}
+                            >
+                                🚪 Баромадан
                             </button>
                         </>
                     ) : (
-                        <button className="btn btnPri" style={{ width: "100%" }} onClick={goLogin}>
-                            Login
+                        <button
+                            className="btn btnPri"
+                            style={{ width: "100%" }}
+                            onClick={goLogin}
+                        >
+                            🔐 Ворид шудан
                         </button>
                     )}
                 </div>
             )}
         </div>
     );
+
+
+
+
+
+    /* return (
+         <div style={{ position: "relative" }}>
+             <button
+                 type="button"
+                 onClick={() => setOpen((v) => !v)}
+                 style={{ background: "transparent", border: "none", cursor: "pointer", padding: 0 }}
+                 aria-label="user menu"
+             >
+                 <FaUserCircle size={28} />
+             </button>
+
+             {open && (
+                 <div
+                     style={{
+                         position: "absolute",
+                         right: 0,
+                         top: "120%",
+                         background: "#fff",
+                         border: "1px solid rgba(0,0,0,.12)",
+                         borderRadius: 12,
+                         padding: 10,
+                         minWidth: 160,
+                         boxShadow: "0 10px 30px rgba(0,0,0,.10)",
+                         zIndex: 999,
+                     }}
+                 >
+                     {user ? (
+                         <>
+                             <div style={{ fontSize: 12, opacity: 0.7, marginBottom: 8 }}>
+                                 Role: <b>{user.role}</b>
+                             </div>
+                             {user.role === "admin" && (
+                                 <button className="btn btnPri" style={{ width: "100%", marginBottom: 8 }} onClick={() => nav("/admin")}>
+                                     Admin
+                                 </button>
+                             )}
+                             <button className="btn" style={{ width: "50%" }} onClick={doLogout}>
+                                 Logout
+                             </button>
+                         </>
+                     ) : (
+                         <button className="btn btnPri" style={{ width: "100%" }} onClick={goLogin}>
+                             Login
+                         </button>
+                     )}
+                 </div>
+             )}
+         </div>
+     );*/
 }
 
 /* =========================
@@ -155,474 +258,7 @@ function LoginPage({ setUser }) {
    Home Page (UI-и ту)
 ========================= */
 function HomePage({ user, setUser }) {
-    const WA_PHONE = import.meta.env.VITE_WA_PHONE || "+992900000000";
-
-    const [services, setServices] = useState({
-        wash: { key: "wash", title: "Об задан", subtitle: "Шустани берунӣ", price: 10 },
-        clean: { key: "clean", title: "Пок кардан", subtitle: "Тозакунии дохил", price: 10 },
-        vacuum: { key: "vacuum", title: "Пласос кардан", subtitle: "Вакуум", price: 15 },
-    });
-
-    const serviceCards = useMemo(
-        () => [
-            { key: "wash", subtitleFallback: "Шустани берунӣ" },
-            { key: "clean", subtitleFallback: "Тозакунии дохил" },
-            { key: "vacuum", subtitleFallback: "Вакуум" },
-        ],
-        []
-    );
-
-    const [selected, setSelected] = useState({ wash: true, clean: true, vacuum: true });
-    const [discount, setDiscount] = useState(0);
-
-    const [custName, setCustName] = useState("");
-    const [carType, setCarType] = useState("");
-    const [phone, setPhone] = useState("");
-    const [location, setLocation] = useState("Исфара, Чоркӯҳ, Гузар");
-
-    const [toast, setToast] = useState("");
-    const [savedOrder, setSavedOrder] = useState(null);
-
-    const [stats, setStats] = useState(null);
-    const [reportTab, setReportTab] = useState("day");
-
-    // load services
-    useEffect(() => {
-        (async () => {
-            try {
-                const items = await getServices();
-                setServices((prev) => {
-                    const next = { ...prev };
-                    for (const s of items) {
-                        const key = s.key;
-                        if (!key) continue;
-                        next[key] = {
-                            key,
-                            title: s.title || prev[key]?.title || key,
-                            subtitle: s.subtitle || prev[key]?.subtitle || "",
-                            price: Number(s.price || 0),
-                        };
-                    }
-                    return next;
-                });
-            } catch {
-                // ignore
-            }
-        })();
-    }, []);
-
-    // load stats
-    useEffect(() => {
-        const load = async () => {
-            try {
-                const s = await getStats();
-                setStats(s);
-            } catch {}
-        };
-        load();
-        const t = setInterval(load, 15000);
-        return () => clearInterval(t);
-    }, []);
-
-    // clock
-    const [clock, setClock] = useState("");
-    useEffect(() => {
-        const tick = () => {
-            const d = new Date();
-            setClock(
-                `${String(d.getHours()).padStart(2, "0")}:` +
-                `${String(d.getMinutes()).padStart(2, "0")}:` +
-                `${String(d.getSeconds()).padStart(2, "0")}`
-            );
-        };
-        tick();
-        const t = setInterval(tick, 1000);
-        return () => clearInterval(t);
-    }, []);
-
-    // toast timer
-    useEffect(() => {
-        if (!toast) return;
-        const t = setTimeout(() => setToast(""), 2400);
-        return () => clearTimeout(t);
-    }, [toast]);
-
-    const perOrder = useMemo(() => {
-        const aWash = selected.wash ? Number(services.wash?.price || 0) : 0;
-        const aClean = selected.clean ? Number(services.clean?.price || 0) : 0;
-        const aVac = selected.vacuum ? Number(services.vacuum?.price || 0) : 0;
-        return { aWash, aClean, aVac, sum: aWash + aClean + aVac };
-    }, [selected, services]);
-
-    const totalLocal = useMemo(() => {
-        const disc = Math.max(0, Number(discount || 0));
-        return Math.max(0, perOrder.sum - disc);
-    }, [perOrder.sum, discount]);
-
-    const report = useMemo(() => {
-        if (!stats) return { revenue: 0, count: 0, label: "" };
-        if (reportTab === "day") return { ...stats.day, label: "" };
-        if (reportTab === "week") return { ...stats.week, label: "" };
-        return { ...stats.month, label: "" };
-    }, [stats, reportTab]);
-
-    function toggle(key) {
-        setSelected((s) => ({ ...s, [key]: !s[key] }));
-    }
-
-    function resetSel() {
-        setSelected({ wash: false, clean: false, vacuum: false });
-        setToast("Интихобҳо тоза шуданд.");
-    }
-
-    function buildOrderText(totalForText = totalLocal) {
-        const items = [];
-        if (selected.wash) items.push(`Об задан: ${money(services.wash.price)} сомонӣ`);
-        if (selected.clean) items.push(`Пок кардан: ${money(services.clean.price)} сомонӣ`);
-        if (selected.vacuum) items.push(`Пласос кардан: ${money(services.vacuum.price)} сомонӣ`);
-
-        const lines = [
-            "Салом! Фармоиш барои мойка:",
-            custName ? `Ном: ${custName}` : null,
-            carType ? `Мошин: ${carType}` : null,
-            phone ? `Тел: ${phone}` : null,
-            location ? `Ҷой: ${location}` : null,
-            "",
-            ...items,
-            `Тахфиф: ${money(discount)} сомонӣ`,
-            `Ҷамъ: ${money(totalForText)} сомонӣ`,
-        ].filter(Boolean);
-
-        return lines.join("\n");
-    }
-
-    async function copyText() {
-        const txt = buildOrderText(savedOrder?.total ?? totalLocal);
-        try {
-            await navigator.clipboard.writeText(txt);
-            setToast("Текст copy шуд ✅");
-        } catch {
-            setToast("Copy нашуд. Дастӣ интихоб кун.");
-        }
-    }
-
-    async function saveToMongo() {
-        try {
-            const order = await createOrder({
-                customerName: custName,
-                phone,
-                carType,
-                location,
-                selected,
-                discount: Number(discount || 0),
-            });
-            setSavedOrder(order);
-            setToast("Фармоиш сабт шуд ✅");
-            try {
-                const s = await getStats();
-                setStats(s);
-            } catch {}
-        } catch {
-            setToast("Сабт нашуд (API/Backend check кунед).");
-        }
-    }
-
-    return (
-        <div className="wrap">
-            <header>
-                <div className="logo" style={{ gap: 12 }}>
-                    <UserMenu user={user} setUser={setUser} />
-                    <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                        <b>Мойка</b>
-                        <span>Тозагӣ • Суръат • Сифат</span>
-                    </div>
-                </div>
-
-                <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-                    <a className="btn btnPri" href={`tel:${WA_PHONE}`}>📞 Занг</a>
-                    <a className="btn btnOk" target="_blank" rel="noreferrer" href={waLink(WA_PHONE, "Салом! Ман мехоҳам мойка фармоиш диҳам.")}>
-                        💬 WhatsApp
-                    </a>
-                </div>
-            </header>
-
-            {/* 👇 Боқимонда UI-и HomePage (ҳамоне, ки доштӣ) */}
-            {/* Барои кӯтоҳ мондан, қисми поёнро аз коди худат нигоҳ дор — тағйир намехоҳад. */}
-            {/* Танҳо UserMenu аллакай дар боло омад ва createOrder/getServices/getStats кор мекунанд. */}
-        </div>
-    );
-}
-
-/* =========================
-   App Router + Auth bootstrap
-========================= */
-export default function App() {
-    const [user, setUser] = useState(null);
-    const [loadingMe, setLoadingMe] = useState(true);
-
-    useEffect(() => {
-        (async () => {
-            try {
-                const u = await getMe();
-                setUser(u);
-            } catch {
-                setUser(null);
-            } finally {
-                setLoadingMe(false);
-            }
-        })();
-    }, []);
-
-    if (loadingMe) return null;
-
-    return (
-        <Routes>
-            <Route path="/login" element={<LoginPage setUser={setUser} />} />
-
-            <Route
-                path="/admin"
-                element={user?.role === "admin" ? <Admin /> : <Navigate to="/" replace />}
-            />
-
-            <Route
-                path="/"
-                element={
-                    user?.role === "admin"
-                        ? <Navigate to="/admin" replace />
-                        : <HomePage user={user} setUser={setUser} />
-                }
-            />
-
-            <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-    );
-}
-
-/*
-import React, { useEffect, useMemo, useState } from "react";
-import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
-import Admin from "./pages/Admin.jsx";
-import Login from "./pages/Login.jsx";
-import { FaUserCircle } from "react-icons/fa";
-import { getServices, createOrder, getStats, getMe, login as apiLogin, logout as apiLogout, updateService } from "./api";
-
-const money = (n) =>
-    (Math.round((Number(n) + Number.EPSILON) * 100) / 100).toFixed(2);
-
-function waLink(phone, text) {
-    const digits = String(phone || "").replace(/[^\d+]/g, "").replace("+", "");
-    return `https://wa.me/${digits}?text=${encodeURIComponent(text)}`;
-}
-
-/!* =========================
-   User icon menu (Login/Logout)
-========================= *!/
-function UserMenu({ user, setUser }) {
-    const [open, setOpen] = useState(false);
-    const nav = useNavigate();
-
-    const goLogin = () => {
-        setOpen(false);
-        nav("/login");
-    };
-
-    const doLogout = () => {
-        apiLogout();
-        setUser(null);
-        setOpen(false);
-        nav("/");
-    };
-
-    return (
-        <div style={{ position: "relative" }}>
-            <button
-                type="button"
-                onClick={() => setOpen((v) => !v)}
-                style={{ background: "transparent", border: "none", cursor: "pointer", padding: 0 }}
-                aria-label="user menu"
-            >
-                <FaUserCircle size={28} />
-            </button>
-
-            {open && (
-                <div
-                    style={{
-                        position: "absolute",
-                        right: 0,
-                        top: "120%",
-                        background: "#fff",
-                        border: "1px solid rgba(0,0,0,.12)",
-                        borderRadius: 12,
-                        padding: 10,
-                        minWidth: 140,
-                        boxShadow: "0 10px 30px rgba(0,0,0,.10)",
-                        zIndex: 999,
-                    }}
-                >
-                    {user ? (
-                        <>
-                            <div style={{ fontSize: 12, opacity: 0.7, marginBottom: 8 }}>
-                                {user.role}
-                            </div>
-                            <button className="btn" style={{ width: "100%" }} onClick={doLogout}>
-                                Logout
-                            </button>
-                        </>
-                    ) : (
-                        <button className="btn btnPri" style={{ width: "100%" }} onClick={goLogin}>
-                            Login
-                        </button>
-                    )}
-                </div>
-            )}
-        </div>
-    );
-}
-
-/!* =========================
-   Login Page (simple)
-========================= *!/
-function LoginPage({ setUser }) {
-    const nav = useNavigate();
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [err, setErr] = useState("");
-
-    const onSubmit = async (e) => {
-        e.preventDefault();
-        setErr("");
-        try {
-            const user = await apiLogin(email, password); // api.js: login() token-ро save мекунад
-            setUser(user);
-            if (user?.role === "admin") nav("/admin");
-            else nav("/");
-        } catch {
-            setErr("Login failed (email/password ё backend).");
-        }
-    };
-
-    return (
-        <div className="wrap" style={{ maxWidth: 520 }}>
-            <header style={{ marginBottom: 20 }}>
-                <div className="logo">
-                    <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                        <b>Login</b>
-                        <span>Воридшавӣ</span>
-                    </div>
-                </div>
-            </header>
-
-            <div className="panel" style={{ padding: 16 }}>
-                <form onSubmit={onSubmit} style={{ display: "grid", gap: 12 }}>
-                    <div className="field">
-                        <label>Email</label>
-                        <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="admin@mail.com" />
-                    </div>
-
-                    <div className="field">
-                        <label>Password</label>
-                        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
-                    </div>
-
-                    {err && <div className="toast" style={{ display: "block" }}>{err}</div>}
-
-                    <button className="btn btnOk" type="submit">
-                        Ворид шудан
-                    </button>
-                </form>
-            </div>
-        </div>
-    );
-}
-
-/!* =========================
-   Admin Page: Edit services (title/price)
-========================= *!/
-function AdminPage() {
-    const [list, setList] = useState([]);
-    const [toast, setToast] = useState("");
-
-    const load = async () => {
-        const items = await getServices();
-        setList(items);
-    };
-
-    useEffect(() => {
-        load().catch(() => {});
-    }, []);
-
-    useEffect(() => {
-        if (!toast) return;
-        const t = setTimeout(() => setToast(""), 2200);
-        return () => clearTimeout(t);
-    }, [toast]);
-
-    const onChange = (id, field, value) => {
-        setList((prev) => prev.map((s) => (s._id === id ? { ...s, [field]: value } : s)));
-    };
-
-    const save = async (s) => {
-        try {
-            await updateService(s._id, {
-                key: s.key,
-                title: s.title,
-                price: Number(s.price || 0),
-            });
-            setToast("Saved ✅");
-            await load();
-        } catch {
-            setToast("Save failed (token/admin/backend).");
-        }
-    };
-
-    return (
-        <div className="wrap">
-            <header>
-                <div className="logo">
-                    <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                        <b>Admin panel</b>
-                        <span>Тағйири хизматҳо</span>
-                    </div>
-                </div>
-            </header>
-
-            <div className="panel" style={{ padding: 16 }}>
-                <h2 style={{ marginTop: 0 }}>Services</h2>
-
-                <div style={{ display: "grid", gap: 12, maxWidth: 560 }}>
-                    {list.map((s) => (
-                        <div key={s._id} className="panel" style={{ padding: 12 }}>
-                            <div className="muted" style={{ fontSize: 12 }}>{s.key}</div>
-
-                            <div className="field">
-                                <label>Title</label>
-                                <input value={s.title || ""} onChange={(e) => onChange(s._id, "title", e.target.value)} />
-                            </div>
-
-                            <div className="field">
-                                <label>Price</label>
-                                <input type="number" value={s.price ?? 0} onChange={(e) => onChange(s._id, "price", e.target.value)} />
-                            </div>
-
-                            <button className="btn btnOk" onClick={() => save(s)} style={{ width: "100%" }}>
-                                Save
-                            </button>
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-            {toast && <div className="toast" style={{ display: "block" }}>{toast}</div>}
-        </div>
-    );
-}
-
-/!* =========================
-   Home Page: ин ҳамон UI-и ту аст,
-   фақат "drop" -> UserMenu иваз шуд
-========================= *!/
-function HomePage({ user, setUser }) {
-    const WA_PHONE = import.meta.env.VITE_WA_PHONE || "+992900000000";
+    const WA_PHONE = import.meta.env.VITE_WA_PHONE || "+992988290699";
 
     // ===== Services (default 10/10/15, backend override) =====
     const [services, setServices] = useState({
@@ -808,7 +444,7 @@ function HomePage({ user, setUser }) {
         <div className="wrap">
             <header>
                 <div className="logo" style={{ gap: 12 }}>
-                    {/!* ✅ ИКОНКАИ ОДАМЧА *!/}
+                    {/* ✅ ИКОНКАИ ОДАМЧА */}
                     <UserMenu user={user} setUser={setUser} />
 
                     <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -836,8 +472,8 @@ function HomePage({ user, setUser }) {
                 <div className="panel heroLeft">
                     <h1>Мойкаи мошин — 3 хизмат дар як ҷо</h1>
                     <p className="sub">
-                        Интихоб кун: <b>об задан</b>, <b>пок кардан</b>, <b>пласос кардан</b>. Нархҳоро иваз
-                        карда метавонӣ — ҳисобкунак худкор ҷамъ мекунад.
+                        Интихоб кун: <b>об задан</b>, <b>пок кардан</b>, <b>пласос кардан</b>. Нархҳоро
+                        иваз карда метавонӣ — ҳисобкунак худкор ҷамъ мекунад.
                     </p>
 
                     <div className="chips">
@@ -848,8 +484,12 @@ function HomePage({ user, setUser }) {
                     </div>
 
                     <div className="heroActions">
-                        <a className="btn btnPri" href="#services">Хизматҳо</a>
-                        <a className="btn btnOk" href="#calc">Ҳисобкунак</a>
+                        <a className="btn btnPri" href="#services">
+                            Хизматҳо
+                        </a>
+                        <a className="btn btnOk" href="#calc">
+                            Ҳисобкунак
+                        </a>
                     </div>
                 </div>
 
@@ -865,18 +505,27 @@ function HomePage({ user, setUser }) {
                             <div className="v">Ҳар рӯз</div>
                         </div>
 
-                        {/!* Report block *!/}
+                        {/* Report block */}
                         <div className="field" style={{ marginTop: 12 }}>
                             <div className="k">Ҳисобот</div>
 
                             <div className="seg">
-                                <button className={`segBtn ${reportTab === "day" ? "on" : ""}`} onClick={() => setReportTab("day")}>
+                                <button
+                                    className={`segBtn ${reportTab === "day" ? "on" : ""}`}
+                                    onClick={() => setReportTab("day")}
+                                >
                                     1 рӯз
                                 </button>
-                                <button className={`segBtn ${reportTab === "week" ? "on" : ""}`} onClick={() => setReportTab("week")}>
+                                <button
+                                    className={`segBtn ${reportTab === "week" ? "on" : ""}`}
+                                    onClick={() => setReportTab("week")}
+                                >
                                     1 ҳафта
                                 </button>
-                                <button className={`segBtn ${reportTab === "month" ? "on" : ""}`} onClick={() => setReportTab("month")}>
+                                <button
+                                    className={`segBtn ${reportTab === "month" ? "on" : ""}`}
+                                    onClick={() => setReportTab("month")}
+                                >
                                     1 моҳ
                                 </button>
                             </div>
@@ -910,7 +559,9 @@ function HomePage({ user, setUser }) {
                     <h2>3 хизмат</h2>
                     <p>Ҳар хизматро интихоб/хомӯш кун — нархҳо дар ҳисобкунак ҷамъ мешаванд.</p>
                 </div>
-                <div className="muted" style={{ fontSize: 12 }}>Нархҳо сомонӣ</div>
+                <div className="muted" style={{ fontSize: 12 }}>
+                    Нархҳо сомонӣ
+                </div>
             </div>
 
             <section className="grid">
@@ -928,7 +579,11 @@ function HomePage({ user, setUser }) {
                                 </div>
                             </div>
 
-                            <div className="toggle" data-on={selected[key] ? "true" : "false"} onClick={() => toggle(key)}>
+                            <div
+                                className="toggle"
+                                data-on={selected[key] ? "true" : "false"}
+                                onClick={() => toggle(key)}
+                            >
                                 <div className="tick"></div>
                                 <span>Интихоб</span>
                             </div>
@@ -991,13 +646,20 @@ function HomePage({ user, setUser }) {
                         </div>
 
                         <div className="row">
-                            <span className="l"><b>Ҷамъ</b></span>
+              <span className="l">
+                <b>Ҷамъ</b>
+              </span>
                             <span className="r mono">{money(totalLocal)}</span>
                         </div>
 
                         <div className="field">
                             <label>Тахфиф (сомонӣ)</label>
-                            <input type="number" min="0" value={discount} onChange={(e) => setDiscount(Number(e.target.value || 0))} />
+                            <input
+                                type="number"
+                                min="0"
+                                value={discount}
+                                onChange={(e) => setDiscount(Number(e.target.value || 0))}
+                            />
                         </div>
 
                         <div className="foot">
@@ -1011,17 +673,29 @@ function HomePage({ user, setUser }) {
 
                         <div className="field">
                             <label>Ном (ихтиёрӣ)</label>
-                            <input value={custName} onChange={(e) => setCustName(e.target.value)} placeholder="Масалан: Умар" />
+                            <input
+                                value={custName}
+                                onChange={(e) => setCustName(e.target.value)}
+                                placeholder="Масалан: Умар"
+                            />
                         </div>
 
                         <div className="field">
                             <label>Навъи мошин</label>
-                            <input value={carType} onChange={(e) => setCarType(e.target.value)} placeholder="Седан / Джип / ..." />
+                            <input
+                                value={carType}
+                                onChange={(e) => setCarType(e.target.value)}
+                                placeholder="Седан / Джип / ..."
+                            />
                         </div>
 
                         <div className="field">
                             <label>Телефон (ихтиёрӣ)</label>
-                            <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+992 ..." />
+                            <input
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value)}
+                                placeholder="+992 ..."
+                            />
                         </div>
 
                         <div style={{ marginTop: 12, display: "flex", gap: 10, flexWrap: "wrap" }}>
@@ -1043,21 +717,25 @@ function HomePage({ user, setUser }) {
 
                         {savedOrder && (
                             <p className="sub" style={{ marginTop: 12, fontSize: 13 }}>
-                                ✅ Сабт шуд. Total : <span className="mono">{money(savedOrder.total)}</span>
+                                ✅ Сабт шуд. Ҷамъ: <span className="mono">{money(savedOrder.total)}</span>
                             </p>
                         )}
                     </div>
                 </div>
             </section>
 
-            {toast && <div className="toast" style={{ display: "block" }}>{toast}</div>}
+            {toast && (
+                <div className="toast" style={{ display: "block" }}>
+                    {toast}
+                </div>
+            )}
         </div>
     );
 }
 
-/!* =========================
+/* =========================
    App Router + Auth bootstrap
-========================= *!/
+========================= */
 export default function App() {
     const [user, setUser] = useState(null);
     const [loadingMe, setLoadingMe] = useState(true);
@@ -1065,7 +743,7 @@ export default function App() {
     useEffect(() => {
         (async () => {
             try {
-                const u = await getMe(); // api.js: /api/auth/me
+                const u = await getMe();
                 setUser(u);
             } catch {
                 setUser(null);
@@ -1083,9 +761,7 @@ export default function App() {
 
             <Route
                 path="/admin"
-                element={
-                    user?.role === "admin" ? <AdminPage /> : <Navigate to="/" replace />
-                }
+                element={user?.role === "admin" ? <Admin /> : <Navigate to="/" replace />}
             />
 
             <Route
@@ -1101,4 +777,3 @@ export default function App() {
         </Routes>
     );
 }
-*/

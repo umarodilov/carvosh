@@ -77,7 +77,44 @@ header{
   gap:16px;
   margin-bottom:14px;
 }
-@media (max-width: 900px){ .hero{grid-template-columns:1fr} }
+@media (max-width: 900px){
+  .hero{
+    grid-template-columns: 1fr;
+  }
+
+  .heroLeft,
+  .heroRight{
+    padding: 14px;
+  }
+}
+@media (max-width: 900px){
+  header{
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .logo{
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  header > div:last-child{
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+@media (max-width: 900px){
+  .kpiGrid{
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 520px){
+  .heroActions .btn{
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 
 .panel{
   border:1px solid var(--line);
@@ -404,4 +441,77 @@ body{ overflow-x: hidden; }
   margin-top: 6px;
   font-size: 12px;
   color: var(--muted);
+}
+
+
+/* =========================
+   MOBILE FIX (адаптив ҳақиқӣ)
+========================= */
+@media (max-width: 520px){
+
+  .wrap{
+    padding: 16px 12px 34px;
+  }
+
+  header{
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  /* логотип 100% шавад, то қатор нашиканад */
+  .logo{
+    width: 100%;
+    border-radius: 18px;   /* дар мобил беҳтар аз 999px */
+    padding: 10px 12px;
+    justify-content: space-between;
+  }
+
+  /* блоки тугмаҳо дар header 100% */
+  header > div:last-child{
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  /* тугмаҳо дар мобил ба 2 колонка (50/50) */
+  header .btn{
+    flex: 1;
+    justify-content: center;
+    min-width: 0;
+  }
+
+  /* сарлавҳаи hero калон набошад */
+  h1{
+    font-size: 22px;
+    line-height: 1.15;
+  }
+
+  .heroLeft{ padding: 14px; }
+  .heroRight{ padding: 14px; }
+
+  /* KPI аз 2 колонка -> 1 колонка */
+  .kpiGrid{
+    grid-template-columns: 1fr;
+  }
+
+  /* heroActions тугмаҳо 100% */
+  .heroActions .btn{
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* чипҳо зичтар */
+  .chips{ gap: 8px; }
+  .chip{ font-size: 11px; padding: 7px 10px; }
+
+  /* section title gap */
+  .sectionTitle{
+    align-items: flex-start;
+  }
+
+  /* dropdown (UserMenu) аз экран набарояд */
+  .userMenuDrop{
+    width: min(260px, calc(100vw - 24px));
+    right: 0;
+    left: auto;
+  }
 }
