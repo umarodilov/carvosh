@@ -17,18 +17,37 @@ router.post("/", async (req, res) => {
             periodType,
             periodCount,
             discount,
+            prices: pricesFromClient, // ✅ аз экран
         } = req.body;
 
+        // 1) Нархи асосӣ аз DB
         const services = await Service.find();
+        const getPrice = (k) => Number(services.find((s) => s.key === k)?.price ?? 0);
 
-        const getPrice = (k) => (services.find((s) => s.key === k)?.price ?? 0);
-
-        const prices = {
+        const dbPrices = {
             wash: getPrice("wash"),
             clean: getPrice("clean"),
             vacuum: getPrice("vacuum"),
         };
 
+        // 2) Агар аз экран нарх омад, онро гир, вагарна dbPrices
+        const clientPrices = pricesFromClient
+            ? {
+                wash: Number(pricesFromClient.wash ?? dbPrices.wash),
+                clean: Number(pricesFromClient.clean ?? dbPrices.clean),
+                vacuum: Number(pricesFromClient.vacuum ?? dbPrices.vacuum),
+            }
+            : dbPrices;
+
+        // 3) (ИХТИЁРӢ, аммо муҳим) лимит мон, то кас нархро 0/хеле калон накунад
+        const clamp = (v) => Math.min(1000, Math.max(0, Number(v || 0)));
+        const prices = {
+            wash: clamp(clientPrices.wash),
+            clean: clamp(clientPrices.clean),
+            vacuum: clamp(clientPrices.vacuum),
+        };
+
+        // 4) total-ро ҳамеша backend ҳисоб мекунад
         const total = calculateTotal({
             services: prices,
             selected,

@@ -417,7 +417,6 @@ function HomePage({ user, setUser }) {
             setToast("Copy нашуд. Дастӣ интихоб кун.");
         }
     }
-
     async function saveToMongo() {
         try {
             const order = await createOrder({
@@ -426,8 +425,16 @@ function HomePage({ user, setUser }) {
                 carType,
                 location,
                 selected,
+                // ✅ нархҳои ҷорӣ (аз экран) — агар даст нарасонӣ ҳамон default мемонад
+                prices: {
+                    wash: Number(services.wash?.price || 0),
+                    clean: Number(services.clean?.price || 0),
+                    vacuum: Number(services.vacuum?.price || 0),
+                },
+
                 discount: Number(discount || 0),
             });
+
             setSavedOrder(order);
             setToast("Фармоиш сабт шуд ✅");
 
@@ -439,7 +446,6 @@ function HomePage({ user, setUser }) {
             setToast("Сабт нашуд (API/Backend check кунед).");
         }
     }
-
     return (
         <div className="wrap">
             <header>
